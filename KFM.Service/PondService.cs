@@ -26,7 +26,8 @@ public class PondService : IPondService
         try
         {
             int result = -1;
-            if(p != null && p.PondId == -1)
+            var pond = await _unitOfWork.PondRepository.GetByIdAsync(p.PondId);
+            if(pond == null)
             {
                 result = await _unitOfWork.PondRepository.CreateAsync(p);
                 if (result > 0)
@@ -56,12 +57,19 @@ public class PondService : IPondService
         try
         {
             var pond = await _unitOfWork.PondRepository.GetByIdAsync(id);
-            var result = await _unitOfWork.PondRepository.RemoveAsync(pond);
-            if (result)
+            if(pond == null)
             {
-                return new BusinessResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG, pond);
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Pond());
             }
-            return new BusinessResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+            else
+            {
+                var result = await _unitOfWork.PondRepository.RemoveAsync(pond);
+                if (result)
+                {
+                    return new BusinessResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG, pond);
+                }
+                return new BusinessResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+            }  
         }catch (Exception ex)
         {
             return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());

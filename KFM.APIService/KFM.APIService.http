@@ -1,0 +1,6 @@
+@KFM.APIService_HostAddress = http://localhost:5033
+
+GET {{KFM.APIService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
