@@ -2,6 +2,7 @@
 
 public class Const
 {
+    public static string API_ENDPOINT = "https://localhost:7197/api/";
     #region Error Codes
 
     public static int ERROR_EXCEPTION = -4;

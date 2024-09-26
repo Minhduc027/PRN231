@@ -12,13 +12,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KFM.Common\KFM.Common.csproj" />
+    <ProjectReference Include="..\KFM.APIService\KFM.APIService.csproj" />
     <ProjectReference Include="..\KFM.Data\KFM.Data.csproj" />
-    <ProjectReference Include="..\KFM.Service\KFM.Service.csproj" />
   </ItemGroup>
 
 </Project>
