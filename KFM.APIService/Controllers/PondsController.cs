@@ -15,12 +15,12 @@ namespace KFM.APIService.Controllers
     [ApiController]
     public class PondsController : ControllerBase
     {
-        private readonly FA24_SE1720_PRN231_G4_KFMContext _context;
+        //private readonly FA24_SE1720_PRN231_G4_KFMContext _context;
         private readonly IPondService _pondService;
 
-        public PondsController(FA24_SE1720_PRN231_G4_KFMContext context, IPondService pondService)
+        public PondsController(IPondService pondService)
         {
-            _context = context;
+           //_context = context;
             _pondService = pondService;
         }
 
