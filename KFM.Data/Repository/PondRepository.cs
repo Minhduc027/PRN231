@@ -13,4 +13,9 @@ public class PondRepository: GenericRepository<Pond>
         var result = await _context.Ponds.Where(p => p.PumpCapacity > 200).CountAsync();
         return result;
     }
+    public async Task<Pond> GetByIdAsNotracking(int id)
+    {
+        var pond  = await _context.Ponds.AsNoTracking().FirstOrDefaultAsync(p => p.PondId == id);
+        return pond;
+    }
 }

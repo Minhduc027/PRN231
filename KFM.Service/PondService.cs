@@ -26,7 +26,7 @@ public class PondService : IPondService
         try
         {
             int result = -1;
-            var pond = await _unitOfWork.PondRepository.GetByIdAsync(p.PondId);
+            var pond = await _unitOfWork.PondRepository.GetByIdAsNotracking(p.PondId);
             if(pond == null)
             {
                 result = await _unitOfWork.PondRepository.CreateAsync(p);
@@ -96,7 +96,7 @@ public class PondService : IPondService
     {
         try
         {
-            var result = await _unitOfWork.PondRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.PondRepository.GetByIdAsNotracking(id);
             if (result == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
