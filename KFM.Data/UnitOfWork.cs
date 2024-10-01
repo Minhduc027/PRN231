@@ -11,6 +11,10 @@ namespace KFM.Data;
 public class UnitOfWork
 {
     private PondRepository pondRepository;
+    private FoodRepository foodRepository;
+    private WaterRepository waterRepository;
+
+
     private FA24_SE1720_PRN231_G4_KFMContext context;
     public UnitOfWork()
     {
@@ -20,4 +24,15 @@ public class UnitOfWork
     {
         get { return pondRepository ??= new PondRepository(); }
     }
+
+    public FoodRepository FoodRepository
+    {
+        get { return foodRepository ??= new FoodRepository();}
+    }
+
+    public WaterRepository WaterRepository
+    {
+        get { return waterRepository  ??= new WaterRepository(); }
+    }
+
 }
