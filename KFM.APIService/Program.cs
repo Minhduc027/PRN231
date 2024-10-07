@@ -4,7 +4,14 @@ using KFM.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(
+        policy => {
+            policy.WithOrigins("*")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -12,6 +19,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FA24_SE1720_PRN231_G4_KFMContext>();
 
 builder.Services.AddScoped<IPondService, PondService>();
+builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,7 +33,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();

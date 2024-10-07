@@ -11,6 +11,7 @@ namespace KFM.Data;
 public class UnitOfWork
 {
     private PondRepository pondRepository;
+    private SaltRequirementRepository saltRequirementRepository;
     private FA24_SE1720_PRN231_G4_KFMContext context;
     public UnitOfWork()
     {
@@ -19,5 +20,9 @@ public class UnitOfWork
     public PondRepository PondRepository
     {
         get { return pondRepository ??= new PondRepository(); }
+    }
+    public SaltRequirementRepository SaltRequirementRepository
+    {
+        get { return saltRequirementRepository ??= new SaltRequirementRepository(); }
     }
 }

@@ -7,6 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<FA24_SE1720_PRN231_G4_KFMContext>();
 builder.Services.AddScoped<IPondService, PondService>();
+builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
+
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(
+        policy => {
+            policy.WithOrigins("*")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
