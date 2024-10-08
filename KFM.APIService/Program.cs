@@ -20,6 +20,7 @@ builder.Services.AddDbContext<FA24_SE1720_PRN231_G4_KFMContext>();
 
 builder.Services.AddScoped<IPondService, PondService>();
 builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

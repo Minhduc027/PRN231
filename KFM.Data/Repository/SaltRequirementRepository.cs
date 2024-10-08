@@ -18,7 +18,12 @@ public class SaltRequirementRepository: GenericRepository<SaltRequirement>
 
     public async Task<SaltRequirement?> GetByIdAsNotracking(int id)
     {
-        var saltRequirement = await _context.SaltRequirements.AsNoTracking().FirstOrDefaultAsync(p => p.SaltId == id);
+        var saltRequirement = await _context.SaltRequirements.Include(s => s.Pond).AsNoTracking().FirstOrDefaultAsync(p => p.SaltId == id);
+        return saltRequirement != null ? saltRequirement : null;
+    }
+    public async Task<List<SaltRequirement>?> GetAllSalt()
+    {
+        var saltRequirement = await _context.SaltRequirements.Include(s => s.Pond).AsNoTracking().ToListAsync();
         return saltRequirement != null ? saltRequirement : null;
     }
 }

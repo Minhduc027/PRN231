@@ -1,4 +1,5 @@
-﻿using KFM.Common;
+﻿using AutoMapper;
+using KFM.Common;
 using KFM.Data;
 using KFM.Data.Models;
 using KFM.Service.Base;
@@ -19,10 +20,12 @@ public interface ISaltRequirementService
 public class SaltRequirementService : ISaltRequirementService
 {
     private readonly UnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public SaltRequirementService()
+    public SaltRequirementService(IMapper mapper)
     {
         _unitOfWork ??= new UnitOfWork();
+        _mapper = mapper;
     }
 
     public async Task<IBusinessResult> DeleteById(int id)
@@ -54,7 +57,8 @@ public class SaltRequirementService : ISaltRequirementService
     {
         try
         {
-            var result = await _unitOfWork.SaltRequirementRepository.GetAllAsync();
+            var salts = await _unitOfWork.SaltRequirementRepository.GetAllSalt();
+            List<SaltRequirementDto> result = _mapper.Map<List<SaltRequirementDto>>(salts);
             if (result == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
@@ -71,7 +75,8 @@ public class SaltRequirementService : ISaltRequirementService
     {
         try
         {
-            var result = await _unitOfWork.SaltRequirementRepository.GetByIdAsNotracking(id);
+            var salts = await _unitOfWork.SaltRequirementRepository.GetByIdAsNotracking(id);
+            SaltRequirementDto result = _mapper.Map<SaltRequirementDto>(salts);
             if (result == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
