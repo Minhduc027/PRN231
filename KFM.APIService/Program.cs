@@ -20,6 +20,8 @@ builder.Services.AddDbContext<FA24_SE1720_PRN231_G4_KFMContext>();
 
 builder.Services.AddScoped<IPondService, PondService>();
 builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
+builder.Services.AddScoped<IWaterService, WaterService>();
+builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();

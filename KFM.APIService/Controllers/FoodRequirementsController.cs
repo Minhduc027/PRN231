@@ -8,12 +8,12 @@ namespace KFM.APIService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FoodRequirementController : ControllerBase
+    public class FoodRequirementsController : ControllerBase
     {
 
         private readonly IFoodService _foodService;
 
-        public FoodRequirementController(IFoodService foodService)
+        public FoodRequirementsController(IFoodService foodService)
         {
             //_context = context;
             _foodService = foodService;
