@@ -32,20 +32,60 @@
 </div>
 
 
-<div class="modal fade" id="bankModal" tabindex="-1" aria-labelledby="bankModalLabel" aria-hidden="true">
+<div class="modal fade" id="pondModal" tabindex="-1" aria-labelledby="pondModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
-                    <h5 class="modal-title" id="bankModalLabel">Bank</h5>
+                    <h5 class="modal-title" id="pondModalLabel">Add New Pond</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="pondId" name="pondId" />
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="image">Image URL</label>
+                            <input type="text" id="image" name="image" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="size">Size (m²)</label>
+                            <input type="number" id="size" name="size" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="depth">Depth (m)</label>
+                            <input type="number" id="depth" name="depth" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="volumn">Volume (m³)</label>
+                            <input type="number" id="volumn" name="volumn" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="drainCount">Drain Count</label>
+                            <input type="number" id="drainCount" name="drainCount" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pumpCapacity">Pump Capacity (L/s)</label>
+                            <input type="number" id="pumpCapacity" name="pumpCapacity" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button id="btEdit" type="button" class="btn btn-primary">Edit</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             }
@@ -74,10 +114,13 @@
                         html += '<td>' + item.image + '</td>';
                         html += '<td>' + item.size + '</td>';
                         html += '<td>' + item.depth + '</td>';
-                        html += '<td>' + item.volumn + '</td>';
+                        html += '<td>' + item.volume + '</td>';
                         html += '<td>' + item.drainCount + '</td>';
                         html += '<td>' + item.pumpCapacity + '</td>';
-                        html += '<td></td>';
+                        html += '<td>' +
+                            '<button class="btn btn-info btn-edit" data-id="' + item.pondId + '" onclick="editPond(this.getAttribute(\'data-id\'));">Edit</button> ' +
+                            '<button id="btDelete" class="btn btn-danger btn-delete" data-id="' + item.pondId + '" onclick="deletePond(this.getAttribute(\'data-id\'));">Delete</button>' +
+                         '</td>';
                         html += '</tr>';
                     });
                     $('.tblPonds').html(html);
@@ -88,10 +131,140 @@
             })
         }
         function add() {
-            $("#bankModalContent").html("");
-            $("#bankModalLabel").html("Add New");
+            $("#pondModalContent").html("");
+            $("#pondModalLabel").html("Add New");
 
-            $('#bankModal').modal('show');
+            $('#pondModal').modal('show');
         }
+        function editPond(id) {
+            var pondId = $(this).data('id'); // Lấy ID từ nút
+            editPond(pondId); // Gọi hàm editPond
+        }
+
+        function deletePond(id) {
+            console.log(id)
+           if (confirm('Are you sure you want to delete this pond?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: 'https://localhost:7197/api/Ponds/' + id,
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            alert('Server response: ' + result.message);
+                            loadData();
+                        }
+                    },
+                    error: function (xhr, error) {
+                        alert("Error: " + xhr.responseText);
+                        console.log(xhr);
+                    }
+                }); 
+            }
+        }
+        $("#btSave").click(function () {
+            $.ajax({
+                type: "POST",
+                url: 'https://localhost:7197/api/Ponds',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    pondId: 0,
+                    name: $("#name").val(),
+                    image: $("#image").val(),
+                    size: $("#size").val(),
+                    depth: $("#depth").val(),
+                    volume: $("#volumn").val(),
+                    drainCount: $("#drainCount").val(),
+                    pumpCapacity: $("#pumpCapacity").val(),
+                    description: $("#description").val()
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#pondModal').modal('hide'),
+                        loadData()
+                    }
+                },
+                error: function(xhr, error){
+                    alert("Error: " + xhr.responseText),
+                    console.log(xhr)
+                }
+            });
+        });
+
+        $("#btEdit").click(function () {
+            var id = $("#pondId").val();
+            $.ajax({
+                type: "PUT",
+                url: 'https://localhost:7197/api/Ponds',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    pondId: id,
+                    name: $("#name").val(),
+                    image: $("#image").val(),
+                    size: $("#size").val(),
+                    depth: $("#depth").val(),
+                    volume: $("#volumn").val(),
+                    drainCount: $("#drainCount").val(),
+                    pumpCapacity: $("#pumpCapacity").val(),
+                    description: $("#description").val()
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#pondModal').modal('hide'),
+                            loadData()
+                    }
+                },
+                error: function (xhr, error) {
+                    alert("Error: " + xhr.responseText),
+                        console.log(xhr)
+                }
+            });
+        });
+        function editPond(pondId) {
+            // Gửi yêu cầu để lấy dữ liệu của hồ cụ thể
+            $.ajax({
+                url: 'https://localhost:7197/api/Ponds/' + pondId,
+                type: "GET",
+                success: function (result) {
+                    // Gán giá trị từ dữ liệu vào các trường trong form
+                    $('#pondModalLabel').text('Edit Pond');
+                    $('#name').val(result.data.name);
+                    $('#image').val(result.data.image);
+                    $('#size').val(result.data.size);
+                    $('#depth').val(result.data.depth);
+                    $('#volumn').val(result.data.volume);
+                    $('#drainCount').val(result.data.drainCount);
+                    $('#pumpCapacity').val(result.data.pumpCapacity);
+                    $('#description').val(result.data.description);
+                    $('#pondId').val(result.data.pondId);
+
+                    // Hiển thị nút Edit và ẩn nút Save
+                    $('#btEdit').show();
+                    $('#btSave').hide();
+
+                    // Mở modal
+                    $('#pondModal').modal('show');
+                },
+                error: function (xhr, error) {
+                    alert("Error fetching pond data: " + xhr.responseText);
+                }
+            });
+        }
+        $(document).ready(function () {
+            $('#pondModal').on('show.bs.modal', function () {
+                var modalTitle = $('#pondModalLabel').text().trim(); // Lấy tiêu đề của modal
+                if (modalTitle === 'Edit') {
+                    $('#btEdit').show(); // Hiện nút Edit
+                    $('#btSave').hide(); // Ẩn nút Save
+                } else if (modalTitle === 'Add New') {
+                    $('#btSave').show(); // Hiện nút Save
+                    $('#btEdit').hide(); // Ẩn nút Edit
+                }
+            });
+        });
     </script>
 }
