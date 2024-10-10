@@ -1,4 +1,5 @@
-﻿using KFM.Common;
+﻿using AutoMapper;
+using KFM.Common;
 using KFM.Data;
 using KFM.Data.Models;
 using KFM.Service.Base;
@@ -24,9 +25,12 @@ namespace KFM.Service
     public class WaterService : IWaterService
     {
         private readonly UnitOfWork _unitOfWork;
-        public WaterService()
+        private readonly IMapper _mapper;
+
+        public WaterService(UnitOfWork unitOfWork, IMapper mapper)
         {
-            _unitOfWork ??= new UnitOfWork();
+            _unitOfWork ??= unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IBusinessResult> DeleteById(int id)
@@ -35,6 +39,7 @@ namespace KFM.Service
             try
             {
                 var water = await _unitOfWork.WaterRepository.GetByIdAsync(id);
+
                 if (water == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new WaterParameter());
@@ -59,7 +64,8 @@ namespace KFM.Service
         {
             try
             {
-                var result = await _unitOfWork.WaterRepository.GetAllAsync();
+                var waters = await _unitOfWork.WaterRepository.GetAllWaterReq();
+                List<WaterParameterDto> result = _mapper.Map<List<WaterParameterDto>>(waters);
                 if (result == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
@@ -76,7 +82,8 @@ namespace KFM.Service
         {
             try
             {
-                var result = await _unitOfWork.WaterRepository.GetByIdAsNotracking(id);
+                var water = await _unitOfWork.WaterRepository.GetByIdAsNotracking(id);
+                var result = _mapper.Map<WaterParameterDto>(water);
                 if (result == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
@@ -106,7 +113,10 @@ namespace KFM.Service
                 }
                 else
                 {
-                    result = await _unitOfWork.WaterRepository.UpdateAsync(w);
+                    var newDto = _mapper.Map<WaterParameterUpdateDto>(w);
+                    var newEntity = _mapper.Map<WaterParameter>(newDto);
+                    newEntity.CreatedAt = water.CreatedAt;
+                    result = await _unitOfWork.WaterRepository.UpdateAsync(newEntity);
                     if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);

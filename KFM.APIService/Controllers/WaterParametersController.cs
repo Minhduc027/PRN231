@@ -8,11 +8,11 @@ namespace KFM.APIService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WaterRequirementsController : ControllerBase
+    public class WaterParametersController : ControllerBase
     {
         private readonly IWaterService _waterService;
 
-        public WaterRequirementsController(IWaterService waterService)
+        public WaterParametersController(IWaterService waterService)
         {
             //_context = context;
             _waterService = waterService;

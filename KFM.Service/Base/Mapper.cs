@@ -15,6 +15,12 @@ public class Mapper: Profile
         CreateMap<Pond, PondDto>();
         CreateMap<SaltRequirement, SaltRequirementDto>()
             .ForMember(dest => dest.Pond, otp => otp.MapFrom(src => src.Pond));
+
+
+        CreateMap<WaterParameter, WaterParameterDto>()
+            .ForMember(dest => dest.Pond, otp => otp.MapFrom(src => src.Pond));
+        CreateMap<WaterParameter, WaterParameterUpdateDto>()
+            .ForMember(dest => dest.Pond, otp => otp.MapFrom(src => src.Pond)).ReverseMap();
     }
 
 }

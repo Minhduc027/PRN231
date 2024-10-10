@@ -1,0 +1,294 @@
+﻿
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Water Parameters</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">PondName</th>
+                    <th class="card-title text-center">DateMeasured</th>
+                    <th class="card-title text-center">Temperature</th>
+                    <th class="card-title text-center">SaltLevel</th>
+                    <th class="card-title text-center">PHLevel</th>
+                    <th class="card-title text-center">O2Level</th>
+                    <th class="card-title text-center">NO2Level</th>
+                    <th class="card-title text-center">NO3Level</th>
+                    <th class="card-title text-center">PO4Level</th>
+                    <th class="card-title text-center">Recommendation</th>
+                    <th class="card-title text-center">CreatedAt</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblWater">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="waterModal" tabindex="-1" aria-labelledby="waterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="waterModalLabel">Add new Water Parameter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="parameterId" name="parameterId" />
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dateMeasured">DateMeasured</label>
+                            <input type="date" id="dateMeasured" name="dateMeasured" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="temperature">Temperature</label>
+                            <input type="number" id="temperature" name="temperature" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="saltLevel">Salt Level</label>
+                            <input type="number" id="saltLevel" name="saltLevel" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="phlevel">Ph Level</label>
+                            <input type="number" id="phlevel" name="phlevel" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="o2level">O2 Level</label>
+                            <input type="number" id="o2level" name="o2level" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="no2level">No2 Level</label>
+                            <input type="number" id="no2level" name="no2level" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="no3level">No3 Level</label>
+                            <input type="number" id="no3level" name="no3level" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="po4level">Po4 Level</label>
+                            <input type="number" id="po4level" name="po4level" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="recommendation">Recommendation</label>
+                        <textarea id="recommendation" name="recommendation" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button id="btEdit" type="button" class="btn btn-primary">Edit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+        });
+        function loadData() {
+            alert("Load data progressing...");
+            $.ajax({
+                url: 'https://localhost:7197/api/WaterParameters',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    alert('Server response: ' + result.message);
+                    console.log(result);
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.pond.name + '</td>';
+                        html += '<td>' + item.dateMeasured + '</td>';
+                        html += '<td>' + item.temperature + '</td>';
+                        html += '<td>' + item.saltLevel + '</td>';
+                        html += '<td>' + item.phlevel + '</td>';
+                        html += '<td>' + item.o2level + '</td>';
+                        html += '<td>' + item.no2level + '</td>';
+                        html += '<td>' + item.no3level + '</td>';
+                        html += '<td>' + item.po4level + '</td>';
+                        html += '<td>' + item.recommendation + '</td>';
+                        html += '<td>' + item.createdAt + '</td>';
+                        html += '<td>' +
+                            '<button class="btn btn-info btn-edit" data-id="' + item.parameterId + '" onclick="editWater(this.getAttribute(\'data-id\'));">Edit</button> ' +
+                            '<button id="btDelete" class="btn btn-danger btn-delete" data-id="' + item.parameterId + '" onclick="deleteWater(this.getAttribute(\'data-id\'));">Delete</button>' +
+                            '</td>';
+                        html += '</tr>';
+                    });
+                    $('.tblWater').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            })
+        }
+        function add() {
+            $("#waterModalContent").html("");
+            $("#waterModalLabel").html("Add New");
+
+            $('#waterModal').modal('show');
+        }
+        function editWater(id) {
+            var parameterId = $(this).data('id'); // Lấy ID từ nút
+            editWater(parameterId); // Gọi hàm editWater
+        }
+
+        function deleteWater(id) {
+            console.log(id)
+            if (confirm('Are you sure you want to delete this water parameter?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: 'https://localhost:7197/api/WaterParameters/' + id,
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            alert('Server response: ' + result.message);
+                            loadData();
+                        }
+                    },
+                    error: function (xhr, error) {
+                        alert("Error: " + xhr.responseText);
+                        console.log(xhr);
+                    }
+                });
+            }
+        }
+
+        $("#btSave").click(function () {
+            $.ajax({
+                type: "POST",
+                url: 'https://localhost:7197/api/WaterParameters',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    parameterId: 0,
+                    name: $("#name").val(),
+                    dateMeasured: $("#dateMeasured").val(),
+                    temperature: $("#temperature").val(),
+                    saltLevel: $("#saltLevel").val(),
+                    phlevel: $("#phlevel").val(),
+                    o2level: $("#o2level").val(),
+                    no2level: $("#no2level").val(),
+                    no3level: $("#no3level").val(),
+                    po4level: $("#po4level").val(),
+                    recommendation: $("#recommendation").val()
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#waterModal').modal('hide'),
+                            loadData()
+                    }
+                },
+                error: function (xhr, error) {
+                    alert("Error: " + xhr.responseText),
+                        console.log(xhr)
+                }
+            });
+        });
+
+        $("#btEdit").click(function () {
+            var id = $("#parameterId").val();
+            $.ajax({
+                type: "PUT",
+                url: 'https://localhost:7197/api/WaterParameters',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    parameterId: id,
+                    name: $("#name").val(),
+                    dateMeasured: $("#dateMeasured").val(),
+                    temperature: $("#temperature").val(),
+                    saltLevel: $("#saltLevel").val(),
+                    phlevel: $("#phlevel").val(),
+                    o2level: $("#o2level").val(),
+                    no2level: $("#no2level").val(),
+                    no3level: $("#no3level").val(),
+                    po4level: $("#po4level").val(),
+                    recommendation: $("#recommendation").val()
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#waterModal').modal('hide'),
+                            loadData()
+                    }
+                },
+                error: function (xhr, error) {
+                    alert("Error: " + xhr.responseText),
+                        console.log(xhr)
+                }
+            });
+        });
+
+        function editWater(parameterId) {
+            // Gửi yêu cầu để lấy dữ liệu của hồ cụ thể
+            $.ajax({
+                url: 'https://localhost:7197/api/WaterParameters/' + parameterId,
+                type: "GET",
+                success: function (result) {
+                    // Gán giá trị từ dữ liệu vào các trường trong form
+                    $('#waterModalLabel').text('Edit Water');
+                    $('#name').val(result.data.pond.name);
+                    $('#dateMeasured').val(result.data.dateMeasured);
+                    $('#temperature').val(result.data.temperature);
+                    $('#saltLevel').val(result.data.saltLevel);
+                    $('#phlevel').val(result.data.phlevel);
+                    $('#o2level').val(result.data.o2level);
+                    $('#no2level').val(result.data.no2level);
+                    $('#no3level').val(result.data.no3level);
+                    $('#po4level').val(result.data.po4level);
+                    $('#recommendation').val(result.data.recommendation);
+                    $('#parameterId').val(result.data.parameterId);
+
+                    // Hiển thị nút Edit và ẩn nút Save
+                    $('#btEdit').show();
+                    $('#btSave').hide();
+
+                    // Mở modal
+                    $('#waterModal').modal('show');
+                },
+                error: function (xhr, error) {
+                    alert("Error fetching water data: " + xhr.responseText);
+                }
+            });
+        }
+        $(document).ready(function () {
+            $('#waterModal').on('show.bs.modal', function () {
+                var modalTitle = $('#waterModalLabel').text().trim(); // Lấy tiêu đề của modal
+                if (modalTitle === 'Edit') {
+                    $('#btEdit').show(); // Hiện nút Edit
+                    $('#btSave').hide(); // Ẩn nút Save
+                } else if (modalTitle === 'Add New') {
+                    $('#btSave').show(); // Hiện nút Save
+                    $('#btEdit').hide(); // Ẩn nút Edit
+                }
+            });
+        });
+    </script>
+}

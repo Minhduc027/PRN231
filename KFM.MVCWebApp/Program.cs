@@ -1,3 +1,4 @@
+using KFM.Data;
 using KFM.Data.Models;
 using KFM.Service;
 
@@ -6,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<FA24_SE1720_PRN231_G4_KFMContext>();
+builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<IPondService, PondService>();
 builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
+builder.Services.AddScoped<IWaterService, WaterService>();
+builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddCors(options => {
@@ -18,6 +22,7 @@ builder.Services.AddCors(options => {
                   .AllowAnyMethod();
         });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

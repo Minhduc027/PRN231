@@ -14,10 +14,16 @@ namespace KFM.Data.Repository
         public WaterRepository() { }
         public WaterRepository(FA24_SE1720_PRN231_G4_KFMContext context) => _context = context;
 
-        public async Task<WaterParameter> GetByIdAsNotracking(int id)
+        public async Task<WaterParameter?> GetByIdAsNotracking(int id)
         {
-            var water = await _context.WaterParameters.AsNoTracking().FirstOrDefaultAsync(w => w.ParameterId == id);
-            return water;
+            var waterRequirement = await _context.WaterParameters.Include(s => s.Pond).AsNoTracking().FirstOrDefaultAsync(w => w.ParameterId == id);
+            return waterRequirement != null ? waterRequirement : null;
+        }
+
+        public async Task<List<WaterParameter>?> GetAllWaterReq()
+        {
+            var waterRequirement = await _context.WaterParameters.Include(s => s.Pond).AsNoTracking().ToListAsync();
+            return waterRequirement != null ? waterRequirement : null;
         }
     }
 }

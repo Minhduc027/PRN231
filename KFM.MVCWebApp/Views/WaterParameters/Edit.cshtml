@@ -1,0 +1,80 @@
+﻿@model KFM.Data.Models.WaterParameter
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Water Parameter</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ParameterId" />
+            <div class="form-group">
+                <label asp-for="PondId" class="control-label"></label>
+                <select asp-for="PondId" class="form-control" asp-items="ViewBag.PondId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateMeasured" class="control-label"></label>
+                <input asp-for="DateMeasured" class="form-control" type="date" />
+                <span asp-validation-for="DateMeasured" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Temperature" class="control-label"></label>
+                <input asp-for="Temperature" class="form-control" />
+                <span asp-validation-for="Temperature" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SaltLevel" class="control-label"></label>
+                <input asp-for="SaltLevel" class="form-control" />
+                <span asp-validation-for="SaltLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phlevel" class="control-label"></label>
+                <input asp-for="Phlevel" class="form-control" />
+                <span asp-validation-for="Phlevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="O2level" class="control-label"></label>
+                <input asp-for="O2level" class="form-control" />
+                <span asp-validation-for="O2level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="No2level" class="control-label"></label>
+                <input asp-for="No2level" class="form-control" />
+                <span asp-validation-for="No2level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="No3level" class="control-label"></label>
+                <input asp-for="No3level" class="form-control" />
+                <span asp-validation-for="No3level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Po4level" class="control-label"></label>
+                <input asp-for="Po4level" class="form-control" />
+                <span asp-validation-for="Po4level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Recommendation" class="control-label"></label>
+                <input asp-for="Recommendation" class="form-control" />
+                <span asp-validation-for="Recommendation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

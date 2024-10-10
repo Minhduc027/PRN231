@@ -1,0 +1,98 @@
+﻿@model IEnumerable<KFM.Data.Models.WaterParameter>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Water Parameters</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Pond.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateMeasured)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SaltLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phlevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.O2level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.No2level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.No3level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Po4level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Recommendation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pond.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateMeasured)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Temperature)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SaltLevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phlevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.O2level)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.No2level)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.No3level)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Po4level)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Recommendation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+               
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ParameterId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ParameterId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ParameterId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

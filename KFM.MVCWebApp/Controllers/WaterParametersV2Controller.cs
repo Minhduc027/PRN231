@@ -2,7 +2,7 @@
 
 namespace KFM.MVCWebApp.Controllers
 {
-    public class WaterRequirementsV2Controller : Controller
+    public class WaterParametersV2Controller : Controller
     {
         public IActionResult Index()
         {
