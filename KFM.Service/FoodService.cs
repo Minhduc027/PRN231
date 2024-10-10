@@ -97,7 +97,7 @@ namespace KFM.Service
                     result = await _unitOfWork.FoodRepository.CreateAsync(f);
                     if (result > 0)
                     {
-                        return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, p);
+                        return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, f);
                     }
                     return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
                 }
