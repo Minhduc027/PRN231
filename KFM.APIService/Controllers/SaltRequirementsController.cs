@@ -33,7 +33,7 @@ namespace KFM.APIService.Controllers
 
         // PUT: api/SaltRequirements/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IBusinessResult> PutSaltRequirement(SaltRequirement saltRequirement)
         {
             return await _service.Save(saltRequirement);
