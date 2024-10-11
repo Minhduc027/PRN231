@@ -1,4 +1,5 @@
 ﻿using KFM.Common;
+using KFM.Common.Food;
 using KFM.Common.Water;
 using KFM.Data.Models;
 using KFM.Service;
@@ -9,24 +10,22 @@ using Newtonsoft.Json;
 
 namespace KFM.MVCWebApp.Controllers
 {
-    public class WaterParametersController : Controller
+    public class FoodRequirementsController : Controller
     {
         private readonly FA24_SE1720_PRN231_G4_KFMContext _context;
-        private readonly IWaterService _waterService;
-        private readonly IPondService _pondService;
+        private readonly IFoodService _foodService;
 
-        public WaterParametersController(FA24_SE1720_PRN231_G4_KFMContext context, IWaterService waterService, IPondService pondService)
+        public FoodRequirementsController(FA24_SE1720_PRN231_G4_KFMContext context, IFoodService foodService)
         {
             _context = context;
-            _waterService = waterService;
-            _pondService = pondService;
+            _foodService = foodService;
         }
 
         public async Task<IActionResult> Index()
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "WaterParameters"))
+                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "FoodRequirements"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -34,31 +33,38 @@ namespace KFM.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);//parse from api json to BusinessResult
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<List<WaterParameter>>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
+                            var data = JsonConvert.DeserializeObject<List<FoodRequirement>>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new List<WaterParameter>());
+            return View(new List<FoodRequirement>());
         }
-        public async Task<IActionResult> Create()
-        {
-            //ViewData["PondId"] = new SelectList(_context.Ponds, "PondId", "PondId");
-            ViewData["PondId"] = new SelectList(await this.GetList(), "PondId", "Name");
-            return View();
-        }
+
+        //public async Task<IActionResult> Create()
+        //{
+
+        //    ViewData["KoiId"] = new SelectList(await this.GetList(), "KoiId", "Name");
+        //    return View();
+        //}
+
+        //private async Task<List<KoiFish>> GetList()
+        //{
+        //    var result = await _pondService.GetAll();
+        //    return (List<KoiFish>)result.Data!;
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(WaterParameter water)
+        public async Task<IActionResult> Create(FoodRequirement food)
         {
             bool saveStatus = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.API_ENDPOINT + "WaterParameters/", water))
+                    using (var response = await httpClient.PostAsJsonAsync(Const.API_ENDPOINT + "FoodRequirements/", food))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -78,24 +84,17 @@ namespace KFM.MVCWebApp.Controllers
             }
             else
             {
-                
-                return View(water);
+
+                return View(food);
             }
-            
-        }
 
-        private async Task<List<Pond>> GetList()
-        {
-            var result = await _pondService.GetAll();
-            return (List<Pond>)result.Data!;
         }
-
 
         public async Task<IActionResult> Details(int? id)
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "WaterParameters/" + id))
+                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "FoodRequirements/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -103,23 +102,23 @@ namespace KFM.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);//parse from api json to BusinessResult
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<WaterParameterDto>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
+                            var data = JsonConvert.DeserializeObject<FoodRequirementsDto>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new WaterParameterDto());
+            return View(new FoodRequirementsDto());
         }
 
 
         public async Task<IActionResult> Edit(int? id)
         {
-          
-            var waterParameter = new WaterParameter();
+
+            var foodRequirement = new FoodRequirement();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "WaterParameters/" + id))
+                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "FoodRequirements/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -129,19 +128,19 @@ namespace KFM.MVCWebApp.Controllers
                         if (result != null && result.Data != null)
                         {
                             // Kiểm tra xem dữ liệu có phải là một đối tượng hay không
-                            waterParameter = JsonConvert.DeserializeObject<WaterParameter>(result.Data.ToString());
+                            foodRequirement = JsonConvert.DeserializeObject<FoodRequirement>(result.Data.ToString());
                         }
                     }
                 }
             }
-            
-            ViewData["PondId"] = new SelectList(await this.GetList(), "PondId", "Name", waterParameter!.PondId);
-            return View(waterParameter);
+
+            //ViewData["PondId"] = new SelectList(await this.GetList(), "PondId", "Name", waterParameter!.PondId);
+            return View(foodRequirement);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, WaterParameter waterParameter)
+        public async Task<IActionResult> Edit(int id, FoodRequirement foodRequirement)
         {
             bool updateStatus = false;
 
@@ -149,7 +148,7 @@ namespace KFM.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.API_ENDPOINT + "WaterParameters/", waterParameter))
+                    using (var response = await httpClient.PutAsJsonAsync(Const.API_ENDPOINT + "FoodRequirements/", foodRequirement))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -167,21 +166,20 @@ namespace KFM.MVCWebApp.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PondId"] = new SelectList(_context.Ponds, "PondId", "PondId", waterParameter.PondId);
-            return View(waterParameter);
+            ViewData["KoiId"] = new SelectList(_context.KoiFishes, "KoiId", "KoiId", foodRequirement.KoiId);
+            return View(foodRequirement);
         }
-
 
         public async Task<IActionResult> Delete(int? id)
         {
-          
+
             if (id == null)
             {
                 return NotFound();
             }
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "WaterParameters/" + id))
+                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "FoodRequirements/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -190,13 +188,13 @@ namespace KFM.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<WaterParameterDto>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<FoodRequirementsDto>(result.Data.ToString());
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new Pond());
+            return View(new KoiFish());
         }
 
 
@@ -209,7 +207,7 @@ namespace KFM.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.API_ENDPOINT + "WaterParameters/" + id))
+                    using (var response = await httpClient.DeleteAsync(Const.API_ENDPOINT + "FoodRequirements/" + id))
                     {
                         if (response.IsSuccessStatusCode)
                         {

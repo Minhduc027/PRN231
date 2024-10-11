@@ -1,0 +1,64 @@
+﻿@model IEnumerable<KFM.Data.Models.FoodRequirement>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Food Requirements</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Koi.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DevelopmentStage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequiredAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+          
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Koi.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DevelopmentStage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequiredAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+              
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.FoodId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.FoodId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.FoodId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

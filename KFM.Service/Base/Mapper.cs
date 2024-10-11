@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using KFM.Common;
+using KFM.Common.Water;
 using KFM.Data.Models;
 using System;
 using System.Collections.Generic;

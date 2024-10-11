@@ -31,7 +31,7 @@ namespace KFM.Service
         {
             try
             {
-                var food = await _unitOfWork.FoodRepository.GetByIdAsync(id);
+                var food = await _unitOfWork.FoodRepository.GetByIdAsNotracking(id);
                 if (food == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new FoodRequirement());
@@ -56,7 +56,7 @@ namespace KFM.Service
         {
             try
             {
-                var result = await _unitOfWork.FoodRepository.GetAllAsync();
+                var result = await _unitOfWork.FoodRepository.GetAllFoodReq();
                 if (result == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);

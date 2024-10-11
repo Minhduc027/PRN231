@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KFM.Common
+namespace KFM.Common.Water
 {
-    public class WaterParameterDto
+    public class WaterParameterUpdateDto
     {
         public int ParameterId { get; set; }
 
@@ -30,7 +30,7 @@ namespace KFM.Common
 
         public string Recommendation { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+
 
         public PondDto Pond { get; set; } = new PondDto();
     }

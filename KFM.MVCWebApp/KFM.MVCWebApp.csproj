@@ -19,4 +19,8 @@
     <ProjectReference Include="..\KFM.Data\KFM.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\FoodRequirementsV2\" />
+  </ItemGroup>
+
 </Project>
