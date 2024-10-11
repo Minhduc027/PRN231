@@ -13,6 +13,8 @@ public class UnitOfWork
     private PondRepository pondRepository;
     private FoodRepository foodRepository;
     private WaterRepository waterRepository;
+    private KoiFishRepository _koiFish;
+    private KoiGrowthRepository _koiGrowth;
 
 
     private SaltRequirementRepository saltRequirementRepository;
@@ -38,6 +40,14 @@ public class UnitOfWork
     public WaterRepository WaterRepository
     {
         get { return waterRepository  ??= new WaterRepository(); }
+    }
+
+    public KoiFishRepository KoiFishRepository
+    {
+        get
+        {
+            return _koiFish ??= new KoiFishRepository(context);
+        }
     }
 
 }
