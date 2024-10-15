@@ -191,7 +191,7 @@ namespace KFM.MVCWebApp.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PondId"] = new SelectList(_context.Ponds, "PondId", "PondId", saltRequirement.PondId);
+            ViewData["PondId"] = new SelectList(_context.Ponds, "PondId", "Name", saltRequirement.PondId);
             return View(saltRequirement);
         }
 

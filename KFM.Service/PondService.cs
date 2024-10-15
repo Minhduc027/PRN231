@@ -29,6 +29,7 @@ public class PondService : IPondService
             var pond = await _unitOfWork.PondRepository.GetByIdAsNotracking(p.PondId);
             if(pond == null)
             {
+                p.UpdatedAt = null;
                 result = await _unitOfWork.PondRepository.CreateAsync(p);
                 if (result > 0)
                 {
@@ -38,7 +39,18 @@ public class PondService : IPondService
             }
             else
             {
-                result = await _unitOfWork.PondRepository.UpdateAsync(p);
+                #region mapping
+                pond.Name = p.Name;
+                pond.Description = p.Description;
+                pond.PumpCapacity = p.PumpCapacity;
+                pond.Image = p.Image;
+                pond.Size = p.Size;
+                pond.Depth = p.Depth;
+                pond.Volume = p.Volume;
+                pond.DrainCount = p.DrainCount;
+                pond.UpdatedAt = DateTime.Now;
+                #endregion
+                result = await _unitOfWork.PondRepository.UpdateAsync(pond);
                 if (result > 0)
                 {
                     return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);

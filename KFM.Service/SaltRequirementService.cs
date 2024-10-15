@@ -106,6 +106,9 @@ public class SaltRequirementService : ISaltRequirementService
             }
             else
             {
+                #region mapping
+                entity.CreatedAt = pond.CreatedAt;
+                #endregion
                 result = await _unitOfWork.SaltRequirementRepository.UpdateAsync(entity);
                 if (result > 0)
                 {
