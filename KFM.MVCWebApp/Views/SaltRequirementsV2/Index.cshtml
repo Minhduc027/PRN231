@@ -180,24 +180,23 @@
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (result) {
-                        // Làm sạch danh sách trước khi thêm mới
-                        const pondSelect = document.getElementById('pond');
-                        pondSelect.innerHTML = '<option value="">Select pond</option>'; // Tùy chọn mặc định
 
-                        // Duyệt qua dữ liệu và thêm vào dropdown
+                        const pondSelect = document.getElementById('pond');
+                        pondSelect.innerHTML = '<option value="">Select pond</option>'; 
+
                         $.each(result.data, function (key, item) {
-                            // Tạo thẻ option
+
                             const option = document.createElement('option');
-                            option.value = item.pondId; // Giá trị truyền về
-                            option.textContent = item.name; // Tên hồ hiển thị
-                            pondSelect.appendChild(option); // Thêm option vào select
+                            option.value = item.pondId; 
+                            option.textContent = item.name;
+                            pondSelect.appendChild(option);
                         });
 
-                        resolve(); // Đánh dấu thành công
+                        resolve(); 
                     },
                     error: function (xhr, error) {
                         alert("Error fetching pond data: " + xhr.responseText);
-                        reject(error); // Đánh dấu lỗi
+                        reject(error); 
                     }
                 });
             });
@@ -251,10 +250,10 @@
 
         $(document).ready(function () {
             $('#pondModal').on('show.bs.modal', function () {
-                var modalTitle = $('#saltModalLabel').text().trim(); // Lấy tiêu đề của modal
+                var modalTitle = $('#saltModalLabel').text().trim(); 
                 if (modalTitle === 'Edit Salt') {
-                    $('#btEdit').show(); // Hiện nút Edit
-                    $('#btSave').hide(); // Ẩn nút Save
+                    $('#btEdit').show(); 
+                    $('#btSave').hide(); 
                 } else if (modalTitle === 'Add New Salt') {
                     $('#btSave').show(); // Hiện nút Save
                     $('#btEdit').hide(); // Ẩn nút Edit
