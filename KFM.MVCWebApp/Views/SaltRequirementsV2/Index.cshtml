@@ -74,6 +74,9 @@
 @section scripts{
     <script type="text/javascript">
     $(document).ready(function () {
+        loadPonds().then(() => {
+            populatePondOptions();
+        });
         loadData();
     });
 
@@ -106,7 +109,7 @@
                 error: function (xhr, error) {
                     alert(xhr.statusText);
                 }
-            })
+            });
         }
         function add() {
             $("#saltModalContent").html("");
@@ -173,6 +176,19 @@
             });
         });
         function populatePondOptions() {
+            const pondSelect = document.getElementById('pond');
+            pondSelect.innerHTML = '<option value="">Select pond</option>';
+
+            // Sử dụng danh sách hồ đã lưu
+            pondsList.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.pondId;
+                option.textContent = item.name;
+                pondSelect.appendChild(option);
+            });
+        }
+        const pondsList = [];
+        function loadPonds() {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: 'https://localhost:7197/api/Ponds',
@@ -180,23 +196,12 @@
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (result) {
-
-                        const pondSelect = document.getElementById('pond');
-                        pondSelect.innerHTML = '<option value="">Select pond</option>'; 
-
-                        $.each(result.data, function (key, item) {
-
-                            const option = document.createElement('option');
-                            option.value = item.pondId; 
-                            option.textContent = item.name;
-                            pondSelect.appendChild(option);
-                        });
-
-                        resolve(); 
+                        pondsList.push(...result.data);
+                        resolve();
                     },
                     error: function (xhr, error) {
                         alert("Error fetching pond data: " + xhr.responseText);
-                        reject(error); 
+                        reject(error);
                     }
                 });
             });
@@ -238,9 +243,8 @@
                     $('#requiredSaltAmount').val(result.data.requiredSaltAmount);
                     $('#note').val(result.data.notes);
                     $('#saltRequirementId').val(result.data.saltId);
-                    populatePondOptions();
-                    $("#pond").attr(result.data.pond.pondId);
-                    populatePondOptions();
+                    $("#pond").val(result.data.pond.pondId);
+                    
                 },
                 error: function (xhr, error) {
                     alert("Error fetching pond data: " + xhr.responseText);
