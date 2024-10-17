@@ -2,6 +2,7 @@
 using KFM.Data.Models;
 using KFM.Service;
 using KFM.Service.Base;
+using System.Drawing.Printing;
 
 namespace KFM.APIService.Controllers
 {
@@ -18,9 +19,9 @@ namespace KFM.APIService.Controllers
 
         // GET: api/SaltRequirements
         [HttpGet]
-        public async Task<IBusinessResult> GetSaltRequirements()
+        public async Task<IBusinessResult> GetSaltRequirements([FromQuery]int pageNo = 1, [FromQuery] int pageSize = 10)
         {
-            return await _service.GetAll();
+            return await _service.GetAll(pageNo, pageSize);
         }
 
         // GET: api/SaltRequirements/5
@@ -53,7 +54,11 @@ namespace KFM.APIService.Controllers
         {
             return await _service.DeleteById(id);
         }
-
+        [HttpGet("s/{saltAmoumt}")]
+        public async Task<IBusinessResult> searchSalt(double? saltAmoumt, int pageNo = 1, int pageSize = 10)
+        {
+            return await _service.searchSalt(saltAmoumt, pageNo, pageSize);
+        }
         /*private bool SaltRequirementExists(int id)
         {
             return _context.SaltRequirements.Any(e => e.SaltId == id);

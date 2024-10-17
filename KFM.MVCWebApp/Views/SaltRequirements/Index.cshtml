@@ -9,6 +9,11 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form method="get">
+    <input type="number" name="searchTerm"/>
+    <input type="submit" value="Search"/>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -51,3 +56,19 @@
 }
     </tbody>
 </table>
+<div>
+    @if (ViewBag.CurrentPage > 1)
+    {
+        <a href="@Url.Action("Index", new { pageNumber = ViewBag.CurrentPage - 1, pageSize = 10, searchTerm = Context.Request.Query["searchTerm"]  })">Previous</a>
+    }
+
+    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+    {
+        <a href="@Url.Action("Index", new { pageNumber = i, pageSize = 10, searchTerm = Context.Request.Query["searchTerm"] })">@i</a>
+    }
+
+    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+    {
+        <a href="@Url.Action("Index", new { pageNumber = ViewBag.CurrentPage + 1, pageSize = 10, searchTerm = Context.Request.Query["searchTerm"] })">Next</a>
+    }
+</div>

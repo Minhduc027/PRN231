@@ -12,6 +12,7 @@ public interface IPondService
     Task<IBusinessResult> DeleteById(int id);
     //Task<IBusinessResult> Update(Pond p);
     Task<IBusinessResult> Save(Pond p);
+    Task<IBusinessResult> searchPond(string name, int? drainCount, double? size, double? depth, double? volume, double? pumpCapacity);
 }
 public class PondService : IPondService
 {
@@ -119,7 +120,22 @@ public class PondService : IPondService
             return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
         }
     }
-
+    public async Task<IBusinessResult> searchPond(string name, int? drainCount, double? size, double? depth, double? volume, double? pumpCapacity)
+    {
+        try
+        {
+            var result = await _unitOfWork.PondRepository.searchPond(name, drainCount, size, depth, volume, pumpCapacity);
+            if (result == null)
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
+            }
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+        }
+        catch (Exception ex)
+        {
+            return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
+        }
+    }
     /*public async Task<IBusinessResult> Update(Pond p)
     {
         try

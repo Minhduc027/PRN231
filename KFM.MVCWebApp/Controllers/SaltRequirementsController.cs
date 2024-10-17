@@ -29,11 +29,18 @@ namespace KFM.MVCWebApp.Controllers
         }
 
         // GET: SaltRequirements
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(double? searchTerm, int pageNo = 1, int pageSize = 10)
         {
+            List<SaltRequirementDto> data;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.API_ENDPOINT + "SaltRequirements"))
+                string endPoint = Const.API_ENDPOINT + "SaltRequirements";
+                if (searchTerm.HasValue)
+                {
+                    endPoint += $"/s/{searchTerm.Value}";
+                }
+                endPoint += $"?pageNo={pageNo}&pageSize={pageSize}";
+                using (var response = await httpClient.GetAsync(endPoint))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -41,12 +48,17 @@ namespace KFM.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);//parse from api json to BusinessResult
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<List<SaltRequirementDto>>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
+                            data = JsonConvert.DeserializeObject<List<SaltRequirementDto>>(result!.Data!.ToString()!);//parse from BusinessResult to List<Pond>
                             return View(data);
                         }
                     }
                 }
             }
+            int totalRecords = await _saltRequirementService.totalRecord();
+            ViewBag.TotalRecords = totalRecords;
+            ViewBag.PageSize = pageSize;
+            ViewBag.CurrentPage = pageNo;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
             return View(new List<SaltRequirementDto>());
            
         }
@@ -270,5 +282,5 @@ namespace KFM.MVCWebApp.Controllers
             }
 
         }
-    }
+    }        
 }

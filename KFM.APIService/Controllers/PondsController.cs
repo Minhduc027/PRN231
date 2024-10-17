@@ -96,9 +96,23 @@ namespace KFM.APIService.Controllers
             return NoContent();*/
         }
 
+        [HttpGet("search")]
+        public async Task<IBusinessResult> SearchPond(
+        [FromQuery] string name,
+        [FromQuery] int? drainCount,
+        [FromQuery] double? size,
+        [FromQuery] double? depth,
+        [FromQuery] double? volume,
+        [FromQuery] double? pumpCapacity)
+        {
+            return await _pondService.searchPond(name, drainCount, size, depth, volume, pumpCapacity);
+        }
         /*private bool PondExists(int id)
         {
             return _context.Ponds.Any(e => e.PondId == id);
         }*/
+
+            
+        
     }
 }

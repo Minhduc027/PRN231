@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 namespace KFM.Service;
 public interface ISaltRequirementService
 {
-    Task<IBusinessResult> GetAll();
+    Task<IBusinessResult> GetAll(int pageNo, int pageSize);
     Task<IBusinessResult> GetById(int id);
     Task<IBusinessResult> DeleteById(int id);
     Task<IBusinessResult> Save(SaltRequirement entity);
+    Task<IBusinessResult> searchSalt(double? RequiredSaltAmount, int pageNo, int pageSize);
+    Task<int> totalRecord();
 }
 public class SaltRequirementService : ISaltRequirementService
 {
@@ -53,11 +55,11 @@ public class SaltRequirementService : ISaltRequirementService
         }
     }
 
-    public async Task<IBusinessResult> GetAll()
+    public async Task<IBusinessResult> GetAll(int pageNo, int pageSize)
     {
         try
         {
-            var salts = await _unitOfWork.SaltRequirementRepository.GetAllSalt();
+            var salts = await _unitOfWork.SaltRequirementRepository.GetAllSalt(pageNo, pageSize);
             List<SaltRequirementDto> result = _mapper.Map<List<SaltRequirementDto>>(salts);
             if (result == null)
             {
@@ -121,5 +123,23 @@ public class SaltRequirementService : ISaltRequirementService
         {
             return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
         }
+    }
+
+    public async Task<IBusinessResult> searchSalt(double? RequiredSaltAmount, int pageNo, int pageSize)
+    {
+        try
+        {
+            var salts = await _unitOfWork.SaltRequirementRepository.searchSalt(RequiredSaltAmount, pageNo, pageSize);
+            List<SaltRequirementDto> result = _mapper.Map<List<SaltRequirementDto>>(salts);
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+        }
+        catch (Exception ex)
+        {
+            return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
+        }
+    }
+    public async Task<int> totalRecord()
+    {
+        return await _unitOfWork.SaltRequirementRepository.totalRecord();
     }
 }

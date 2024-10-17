@@ -21,9 +21,21 @@ public class SaltRequirementRepository: GenericRepository<SaltRequirement>
         var saltRequirement = await _context.SaltRequirements.Include(s => s.Pond).AsNoTracking().FirstOrDefaultAsync(p => p.SaltId == id);
         return saltRequirement != null ? saltRequirement : null;
     }
-    public async Task<List<SaltRequirement>?> GetAllSalt()
+    public async Task<List<SaltRequirement>?> GetAllSalt(int pageNo, int pageSize)
     {
-        var saltRequirement = await _context.SaltRequirements.Include(s => s.Pond).AsNoTracking().ToListAsync();
+        var saltRequirement = await _context.SaltRequirements.Include(s => s.Pond).AsNoTracking()
+            .Skip(pageNo - 1).Take(pageSize)
+            .ToListAsync();
         return saltRequirement != null ? saltRequirement : null;
+    }
+    public async Task<List<SaltRequirement>> searchSalt(double? RequiredSaltAmount, int pageNo, int pageSize)
+    {
+        return await _context.SaltRequirements.Include(s => s.Pond)
+            .Where(s => s.RequiredSaltAmount >= RequiredSaltAmount)
+            .Skip(pageNo - 1).Take(pageSize).ToListAsync();
+    }
+    public async Task<int> totalRecord()
+    {
+        return await _context.SaltRequirements.CountAsync();
     }
 }
