@@ -1,0 +1,295 @@
+﻿
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Water Parameters</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">KoiName</th>
+                    <th class="card-title text-center">DevelopmentStage</th>
+                    <th class="card-title text-center">RequiredAmount</th>
+                    <th class="card-title text-center">Notes</th>
+                    <th class="card-title text-center">CreatedAt</th>
+                   
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblFood">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="foodModalLabel">Add new Food Requirement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="foodId" name="foodId" />
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="koi">Koi</label>
+                            <select id="koi" name="koi" class="form-control">
+                                <option value="">select koi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="developmentStage">DevelopmentStage</label>
+                            <input type="text" id="developmentStage" name="developmentStage" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="requiredAmount">RequiredAmount</label>
+                            <input type="number" id="requiredAmount" name="requiredAmount" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="notes">Notes</label>
+                            <input type="text" id="notes" name="notes" class="form-control" />
+                        </div>
+                        
+                    </div>
+                    
+                  
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button id="btEdit" type="button" class="btn btn-primary">Edit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadKois().then(() => {
+                populateKoiOptions();
+            });
+            loadData();
+        });
+        function loadData() {
+            alert("Load data progressing...");
+            $.ajax({
+                url: 'https://localhost:7197/api/FoodRequirements',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    alert('Server response: ' + result.message);
+                    
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.koi.name + '</td>';
+                        html += '<td>' + item.developmentStage + '</td>';
+                        html += '<td>' + item.requiredAmount + '</td>';
+                        html += '<td>' + item.notes + '</td>';
+                        html += '<td>' + item.createdAt + '</td>';
+                        html += '<td>' +
+                            '<button class="btn btn-info btn-edit" data-id="' + item.foodId + '" onclick="editFood(this.getAttribute(\'data-id\'));">Edit</button> ' +
+                            '<button id="btDelete" class="btn btn-danger btn-delete" data-id="' + item.foodId + '" onclick="deleteFood(this.getAttribute(\'data-id\'));">Delete</button>' +
+                            '</td>';
+                        html += '</tr>';
+                    });
+                    $('.tblFood').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            })
+        }
+        function add() {
+            $("#foodModalContent").html("");
+            $("#foodModalLabel").html("Add New");
+
+            $('#foodModal').modal('show');
+            populateKoiOptions()
+        }
+
+
+        $("#btSave").click(function () {
+            $.ajax({
+                type: "POST",
+                url: 'https://localhost:7197/api/FoodRequirements',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    foodId: 0,
+                    koiId: $("#koi").val(),
+                    developmentStage: $("#developmentStage").val(),
+                    requiredAmount: $("#requiredAmount").val(),
+                    notes: $("#notes").val(),
+                    createdAt: new Date().toISOString()
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#foodModal').modal('hide'),
+                            loadData()
+                    }
+                },
+                error: function (xhr, error) {
+                    alert("Error: " + xhr.responseText),
+                        console.log(xhr)
+                }
+            });
+        });
+
+       
+
+
+        function populateKoiOptions() {
+            const koiSelect = document.getElementById('koi');
+            koiSelect.innerHTML = '<option value="">Select koi</option>';
+
+            // Sử dụng danh sách hồ đã lưu
+            koisList.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.koiId;
+                option.textContent = item.name;
+                koiSelect.appendChild(option);
+            });
+        }
+        const koisList = [];
+        function loadKois() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: 'https://localhost:7197/api/KoiFish',
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        koisList.push(...result);
+                        resolve();
+                    },
+                    error: function (xhr, error) {
+                        alert("Error fetching koi data: " + xhr.responseText);
+                        reject(error);
+                    }
+                });
+            });
+        }
+
+        function deleteFood(id) {
+            console.log(id)
+            if (confirm('Are you sure you want to delete this food requirement?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: 'https://localhost:7197/api/FoodRequirements/' + id,
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            alert('Server response: ' + result.message);
+                            loadData();
+                        }
+                    },
+                    error: function (xhr, error) {
+                        alert("Error: " + xhr.responseText);
+                        console.log(xhr);
+                    }
+                });
+            }
+        }
+
+
+
+
+
+        // function editWater(id) {
+        //     var parameterId = $(this).data('id');
+        //     editWater2(parameterId);
+        // }
+
+        function editFood(foodId) {
+            console.log(foodId);
+            $.ajax({
+                url: 'https://localhost:7197/api/FoodRequirements/' + foodId,
+                type: "GET",
+                success: function (result) {
+                    // Gán giá trị từ dữ liệu vào các trường trong form
+                    $('#foodModalLabel').text('Edit Food Requirement');
+                    
+                    $("#koi").val(result.data.koi.koiId);
+                    $('#developmentStage').val(result.data.developmentStage);
+                    $('#requiredAmount').val(result.data.requiredAmount);
+                    $('#notes').val(result.data.notes);
+                    $('#foodId').val(result.data.foodId);
+
+                    // Hiển thị nút Edit và ẩn nút Save
+                    $('#btEdit').show();
+                    $('#btSave').hide();
+                    $('#foodModal').modal('show');
+
+                },
+                error: function (xhr, error) {
+                    alert("Error fetching water data: " + xhr.responseText);
+                }
+            });
+        }
+
+        $("#btEdit").click(function () {
+            var id = $("#foodId").val();
+            console.log("id: ");
+            console.log(id);
+            $.ajax({
+                type: "PUT",
+                url: 'https://localhost:7197/api/FoodRequirements',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                data: JSON.stringify({
+                    foodId: id,
+
+                    koiId: $("#koi").val(),
+                    developmentStage: $("#developmentStage").val(),
+                    requiredAmount: $("#requiredAmount").val(),
+                    notes: $("#notes").val(),
+                }),
+                success: function (result) {
+                    if (result.status >= 1) {
+                        $('#foodModal').modal('hide'),
+                            loadData()
+                    }
+                },
+                error: function (xhr, error) {
+                    alert("Error: " + xhr.responseText),
+                        console.log(xhr)
+                }
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('#foodModal').on('show.bs.modal', function () {
+                var modalTitle = $('#foodModalLabel').text().trim(); // Lấy tiêu đề của modal
+                if (modalTitle === 'Edit') {
+                    $('#btEdit').show(); // Hiện nút Edit
+                    $('#btSave').hide(); // Ẩn nút Save
+                } else if (modalTitle === 'Add New') {
+                    $('#btSave').show(); // Hiện nút Save
+                    $('#btEdit').hide(); // Ẩn nút Edit
+                }
+            });
+        });
+    </script>
+}

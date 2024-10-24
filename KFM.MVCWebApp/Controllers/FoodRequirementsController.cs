@@ -14,11 +14,13 @@ namespace KFM.MVCWebApp.Controllers
     {
         private readonly FA24_SE1720_PRN231_G4_KFMContext _context;
         private readonly IFoodService _foodService;
+        private readonly IKoiFishService _koiFishService;
 
-        public FoodRequirementsController(FA24_SE1720_PRN231_G4_KFMContext context, IFoodService foodService)
+        public FoodRequirementsController(FA24_SE1720_PRN231_G4_KFMContext context, IFoodService foodService, IKoiFishService koiFishService)
         {
             _context = context;
             _foodService = foodService;
+            _koiFishService = koiFishService;
         }
 
         public async Task<IActionResult> Index()
@@ -42,19 +44,15 @@ namespace KFM.MVCWebApp.Controllers
             return View(new List<FoodRequirement>());
         }
 
-        //public async Task<IActionResult> Create()
-        //{
+        public async Task<IActionResult> Create()
+        {
 
-        //    ViewData["KoiId"] = new SelectList(await this.GetList(), "KoiId", "Name");
-        //    return View();
-        //}
+            ViewData["KoiId"] = new SelectList(await this.GetList(), "KoiId", "Name");
+            return View();
+        }
 
-        //private async Task<List<KoiFish>> GetList()
-        //{
-        //    var result = await _pondService.GetAll();
-        //    return (List<KoiFish>)result.Data!;
-        //}
-
+       
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FoodRequirement food)
@@ -134,7 +132,7 @@ namespace KFM.MVCWebApp.Controllers
                 }
             }
 
-            //ViewData["PondId"] = new SelectList(await this.GetList(), "PondId", "Name", waterParameter!.PondId);
+            ViewData["KoiId"] = new SelectList(await this.GetList(), "KoiId", "Name", foodRequirement!.KoiId);
             return View(foodRequirement);
         }
 
@@ -170,6 +168,11 @@ namespace KFM.MVCWebApp.Controllers
             return View(foodRequirement);
         }
 
+        private async Task<List<KoiFish>> GetList()
+        {
+            var result = await _koiFishService.GetAll();
+            return (List<KoiFish>)result.Data!;
+        }
         public async Task<IActionResult> Delete(int? id)
         {
 

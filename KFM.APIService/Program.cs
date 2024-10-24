@@ -23,6 +23,7 @@ builder.Services.AddScoped<IPondService, PondService>();
 builder.Services.AddScoped<ISaltRequirementService, SaltRequirementService>();
 builder.Services.AddScoped<IWaterService, WaterService>();
 builder.Services.AddScoped<IFoodService, FoodService>();
+builder.Services.AddScoped<IKoiFishService, KoiFishService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IKoiFishService, KoiFishService>();
 

@@ -1,4 +1,7 @@
-﻿using KFM.Common;
+﻿using AutoMapper;
+using KFM.Common;
+using KFM.Common.Food;
+using KFM.Common.Water;
 using KFM.Data;
 using KFM.Data.Models;
 using KFM.Service.Base;
@@ -22,9 +25,12 @@ namespace KFM.Service
     public class FoodService : IFoodService
     {
         private readonly UnitOfWork _unitOfWork;
-        public FoodService()
+        private readonly IMapper _mapper;
+
+        public FoodService(UnitOfWork unitOfWork, IMapper mapper)
         {
-            _unitOfWork ??= new UnitOfWork();
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IBusinessResult> DeleteById(int id)
@@ -56,7 +62,8 @@ namespace KFM.Service
         {
             try
             {
-                var result = await _unitOfWork.FoodRepository.GetAllFoodReq();
+                var foods = await _unitOfWork.FoodRepository.GetAllFoodReq();
+                List<FoodRequirementsDto> result = _mapper.Map<List<FoodRequirementsDto>>(foods);
                 if (result == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
@@ -73,7 +80,8 @@ namespace KFM.Service
         {
             try
             {
-                var result = await _unitOfWork.FoodRepository.GetByIdAsNotracking(id);
+                var food = await _unitOfWork.FoodRepository.GetByIdAsNotracking(id);
+                var result = _mapper.Map<FoodRequirementsDto>(food);
                 if (result == null)
                 {
                     return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG);
@@ -103,7 +111,10 @@ namespace KFM.Service
                 }
                 else
                 {
-                    result = await _unitOfWork.FoodRepository.UpdateAsync(f);
+                    //var newDto = _mapper.Map<FoodRequirementsUpdateDto>(f);
+                    var newEntity = _mapper.Map<FoodRequirement>(f);
+                    newEntity.CreatedAt = food.CreatedAt;
+                    result = await _unitOfWork.FoodRepository.UpdateAsync(newEntity);
                     if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);

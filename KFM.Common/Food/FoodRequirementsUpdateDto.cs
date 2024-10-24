@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KFM.Common.Food
 {
-    public class FoodRequirementsDto
+    public class FoodRequirementsUpdateDto
     {
         public int FoodId { get; set; }
 
@@ -19,7 +19,7 @@ namespace KFM.Common.Food
 
         public string Notes { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        
         public KoiFishDto Koi { get; set; } = new KoiFishDto();
     }
 }

@@ -114,8 +114,8 @@ namespace KFM.Service
                 }
                 else
                 {
-                    var newDto = _mapper.Map<WaterParameterUpdateDto>(w);
-                    var newEntity = _mapper.Map<WaterParameter>(newDto);
+                    //var newDto = _mapper.Map<WaterParameterUpdateDto>(w);
+                    var newEntity = _mapper.Map<WaterParameter>(w);
                     newEntity.CreatedAt = water.CreatedAt;
                     result = await _unitOfWork.WaterRepository.UpdateAsync(newEntity);
                     if (result > 0)
